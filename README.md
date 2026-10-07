@@ -1,14 +1,20 @@
 # Gestion Immobilier 🏠
 
-Application privée de gestion immobilière. Squelette de départ : connexion,
-accès restreint et une liste de biens synchronisée en temps réel.
+Application privée de simulation d'achat immobilier locatif. Reprend les postes et les
+formules d'un classeur Excel de simulation (« Appartement N.xlsx ») : prix total du projet,
+crédit, charges, cash-flow net mensuel selon la vacance locative, rentabilité brute et nette.
+Chaque simulation est enregistrée et peut être rouverte, modifiée, dupliquée ou supprimée.
 
 Live à [hbdevelop.github.io/gestion-immobilier](https://hbdevelop.github.io/gestion-immobilier/).
 
 ## Structure
 
 - `index.html` / `style.css` — la page
-- `app.js` — logique (auth, temps réel Firestore, rendu)
+- `app.js` — logique (auth, temps réel Firestore, liste et fiche des simulations, import)
+- `calc.js` — moteur de calcul pur (mêmes formules que le classeur), sans DOM ni Firebase
+- `import-xlsx.js` — lecture d'un classeur `.xlsx` (via SheetJS, chargé à la demande) vers les
+  champs d'une simulation, en repérant chaque poste par son libellé
+- `tests.mjs` — tests du calcul et de l'import : `node tests.mjs`
 - `firebase-config.js` — config publique du projet Firebase (aucun email dedans, voir Sécurité)
 - `firestore.rules` — modèle des règles de sécurité Firestore. La liste réelle des emails
   autorisés n'est **pas** versionnée (repo public) : elle n'existe que dans la console Firebase
@@ -33,7 +39,30 @@ Pour ajouter/retirer une personne autorisée :
 
 ## Données
 
-- Collection `biens` : un bien = nom, adresse, date de création, auteur.
+- Collection `simulations` : une simulation = `nom`, `inputs` (les montants saisis, voir
+  `SECTIONS` dans `calc.js`), `createdAt`, `updatedAt`. Les résultats ne sont pas stockés : ils
+  sont recalculés à l'affichage, donc une correction de formule s'applique à toutes les
+  simulations existantes.
+- Les classeurs Excel ne sont **jamais** commités (`.gitignore`) : ils contiennent des chiffres
+  personnels. On les importe depuis l'app (bouton « Importer un fichier Excel »), ce qui crée
+  une simulation à vérifier puis enregistrer.
+
+## Calculs
+
+Identiques au classeur, avec trois ajouts :
+
+- **Rentabilité brute** = loyers annuels ÷ prix total du projet ; **nette** = (loyers annuels −
+  charges hors crédit) ÷ prix total du projet (avant impôts).
+- **Frais de garantie** ajoutés au montant emprunté (comme les frais de dossier).
+- **Apport** déduit du montant emprunté (0 par défaut = financement à 100 % comme le classeur).
+
+L'assurance emprunteur reste ajoutée au taux du crédit, comme dans le classeur.
+
+## Mode démo
+
+`?demo` à la fin de l'URL (ex. `http://localhost:8080/?demo`) : pas de connexion, données en
+mémoire seulement (perdues au rechargement), avec un exemple fictif. Pratique pour tester
+l'interface.
 
 ## Firebase
 

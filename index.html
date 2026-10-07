@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestion Immobilier</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>" />
-  <link rel="stylesheet" href="style.css?v=1" />
+  <link rel="stylesheet" href="style.css?v=2" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -45,26 +45,86 @@
       </div>
     </header>
 
+    <div id="demo-banner" class="demo-banner hidden">
+      Mode démo : rien n'est enregistré, les données disparaissent au rechargement.
+    </div>
+
     <main class="content wide">
-      <section class="card">
-        <div class="card-header"><h2>Ajouter un bien</h2></div>
-        <form id="bien-form" class="bien-form">
-          <input id="f-nom" type="text" placeholder="Nom" required />
-          <input id="f-adresse" type="text" placeholder="Adresse" />
-          <button type="submit" class="btn primary">Ajouter</button>
-        </form>
+      <!-- Liste des simulations -->
+      <section id="list-view" class="hidden">
+        <div class="list-actions">
+          <button id="new-sim-btn" class="btn primary">+ Nouvelle simulation</button>
+          <label class="btn">
+            Importer un fichier Excel
+            <input id="import-input" type="file" accept=".xlsx,.xls" hidden />
+          </label>
+          <span id="import-status" class="save-status"></span>
+        </div>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Simulations</h2>
+            <span id="sims-count" class="user-label"></span>
+          </div>
+          <div class="table-scroll">
+            <table class="sim-table">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th class="num">Prix total</th>
+                  <th class="num">Mensualité</th>
+                  <th class="num">Cash-flow / mois</th>
+                  <th class="num">Renta brute</th>
+                  <th class="num">Renta nette</th>
+                  <th>Modifiée le</th>
+                </tr>
+              </thead>
+              <tbody id="sims-tbody"></tbody>
+            </table>
+          </div>
+          <p id="sims-empty" class="empty hidden">Aucune simulation pour l'instant : crée-en une ou importe un fichier Excel.</p>
+        </section>
       </section>
 
-      <section class="card">
-        <div class="card-header">
-          <h2>Biens</h2>
-          <span id="biens-count" class="user-label"></span>
+      <!-- Édition d'une simulation -->
+      <section id="edit-view" class="hidden">
+        <div class="edit-header">
+          <button id="back-btn" class="btn small">← Simulations</button>
+          <input id="sim-nom" class="sim-nom" type="text" placeholder="Nom de la simulation" />
         </div>
-        <div id="biens-list" class="biens-list"></div>
+        <div class="edit-actions">
+          <button id="save-btn" class="btn primary">Enregistrer</button>
+          <button id="revert-btn" class="btn">Annuler les modifications</button>
+          <button id="duplicate-btn" class="btn">Dupliquer</button>
+          <button id="delete-btn" class="btn danger">Supprimer</button>
+          <span id="save-status" class="save-status"></span>
+        </div>
+
+        <div class="edit-layout">
+          <form id="sim-form" class="sim-form" autocomplete="off"></form>
+          <aside id="results" class="results card"></aside>
+        </div>
+
+        <section class="card explain-card">
+          <details>
+            <summary>Comment le calcul est fait ?</summary>
+            <div class="explain-body">
+              <ol>
+                <li><strong>Prix total du projet</strong> = prix du bien + frais d'agence + frais de notaire + travaux + ameublement + décoratrice. Les frais de notaire = pourcentage saisi × prix du bien.</li>
+                <li><strong>Montant emprunté</strong> = prix total + frais de dossier + frais de garantie − apport.</li>
+                <li><strong>Mensualité</strong> : prêt à mensualités constantes sur la durée saisie, au taux du crédit + taux de l'assurance emprunteur (même méthode que la fonction PMT d'Excel).</li>
+                <li><strong>Charges annuelles</strong> = crédit (mensualité × 12) + toutes les charges, frais administratifs et services saisis par an.</li>
+                <li><strong>Cash-flow net mensuel</strong> = (loyer mensuel × nombre de mois loués − charges annuelles) ÷ 12. Affiché pour 12, 11 et 10 mois loués pour voir l'effet de la vacance locative.</li>
+                <li><strong>Rentabilité brute</strong> = loyers annuels ÷ prix total du projet. <strong>Rentabilité nette</strong> = (loyers annuels − charges hors crédit) ÷ prix total du projet.</li>
+              </ol>
+              <p>Aucun impôt n'est pris en compte : ces résultats sont avant fiscalité.</p>
+            </div>
+          </details>
+        </section>
       </section>
     </main>
   </div>
 
-  <script type="module" src="app.js?v=1"></script>
+  <script type="module" src="app.js?v=2"></script>
 </body>
 </html>

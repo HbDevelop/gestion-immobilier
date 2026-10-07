@@ -11,7 +11,7 @@ service cloud.firestore {
       ];
     }
 
-    match /biens/{bienId} {
+    match /simulations/{simulationId} {
       allow read, write: if isAuthorized();
     }
   }
