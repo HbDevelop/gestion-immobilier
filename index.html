@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestion Immobilier</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>" />
+  <link rel="stylesheet" href="style.css?v=1" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <!-- Écran de connexion -->
+  <div id="login-screen" class="screen centered">
+    <div class="login-card">
+      <h1>🏠 Gestion Immobilier</h1>
+      <div id="google-signin-button" class="google-btn-wrap"></div>
+      <div class="email-link-block">
+        <p class="email-link-hint">Pas de compte Google ? Connexion par lien email :</p>
+        <form id="email-link-form" class="email-link-form">
+          <input id="email-link-input" type="email" placeholder="ton@email.com" required />
+          <button type="submit" class="btn small">Recevoir le lien</button>
+        </form>
+        <p id="email-link-status" class="email-link-status"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Écran d'accès refusé -->
+  <div id="denied-screen" class="screen centered hidden">
+    <div class="login-card">
+      <h1>⛔ Accès refusé</h1>
+      <p>Le compte <strong id="denied-email"></strong> n'est pas autorisé à accéder à cette application.</p>
+      <button id="denied-logout-btn" class="btn">Se déconnecter</button>
+    </div>
+  </div>
+
+  <!-- App principale -->
+  <div id="app-shell" class="hidden">
+    <header class="topbar">
+      <h1>🏠 Gestion Immobilier</h1>
+      <div class="topbar-actions">
+        <span id="user-label" class="user-label"></span>
+        <button id="logout-btn" class="btn small">Déconnexion</button>
+      </div>
+    </header>
+
+    <main class="content wide">
+      <section class="card">
+        <div class="card-header"><h2>Ajouter un bien</h2></div>
+        <form id="bien-form" class="bien-form">
+          <input id="f-nom" type="text" placeholder="Nom" required />
+          <input id="f-adresse" type="text" placeholder="Adresse" />
+          <button type="submit" class="btn primary">Ajouter</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Biens</h2>
+          <span id="biens-count" class="user-label"></span>
+        </div>
+        <div id="biens-list" class="biens-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="app.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+rules_version = '2';
+// Copie de référence des règles publiées dans la console Firebase.
+// La vraie liste des emails autorisés n'est volontairement PAS versionnée (repo public) :
+// elle n'existe que dans la console Firebase → Firestore Database → Règles.
+// Remplacer les placeholders ci-dessous au moment de publier.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuthorized() {
+      return request.auth != null && request.auth.token.email in [
+        "EMAIL_AUTORISE@exemple.com"
+      ];
+    }
+
+    match /biens/{bienId} {
+      allow read, write: if isAuthorized();
+    }
+  }
+}
